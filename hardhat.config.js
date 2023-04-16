@@ -10,6 +10,7 @@ require("dotenv").config({ path: __dirname + '/.env' })
 
 const sapoila_rpc = String(process.env.SRPC)
 const privateKey = String(process.env.PRIVATEKEY)
+const ganache_rpc = String(process.env.GRPC)
 
 module.exports = {
   solidity: "0.8.18",
@@ -17,6 +18,7 @@ module.exports = {
   namedAccounts: {
     deployer: {
       default: 0,
+      tester: 9
     },
     player: {
       default: 9
@@ -35,6 +37,10 @@ module.exports = {
       blockConfirmations: 1,
       accounts: [ privateKey ] 
     },
+    ganache: {
+      url: ganache_rpc,
+      chainId: 5777,
+      blockConfirmations: 1 
+    }
   }
-
 };

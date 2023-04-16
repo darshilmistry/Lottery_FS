@@ -11,12 +11,12 @@ module.exports = async function ({getNamedAccounts, deployments}) {
     const entryFee = networkConfig[chainId]["entryFee"]
     const gasLane = networkConfig[chainId]["gasLane"]
     const gasLimit = networkConfig[chainId]["gasLimit"]
-    const interval = 30
+    const interval = networkConfig[chainId]["updateInterval"]
     const subamt = ethers.utils.parseEther("3")
 
 
     if(devChains.includes(network.name)) {
-        const VRFCoordinatorV2Mock = ethers.getContract("VRFCoordinatorV2Mock")
+        const VRFCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
         VRFCoordinatorV2Address = VRFCoordinatorV2Mock.address
         const trxresponse = await VRFCoordinatorV2Mock.createSubscription()
         const receipt = await trxresponse.wait(1)
@@ -31,11 +31,13 @@ module.exports = async function ({getNamedAccounts, deployments}) {
     const arguments = [
         VRFCoordinatorV2Address,
         entryFee,
-        gaslane, 
+        gasLane, 
         subscriptionId,
         gasLimit,
         interval
     ]
+
+    console.log(arguments)
     
     log("Deploying Lottery>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     const lottery = await deploy("Lottery", {

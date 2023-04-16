@@ -7,13 +7,14 @@ const networkConfig = {
         entryFee: ethers.utils.parseEther("0.3"),
         gasLane: "0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c",
         subscriptionId: "something",
-        gasLimit: "2,500,000"
+        gasLimit: "500,000"
     },
     31337: {
         name: "localhost",
         entryFee: ethers.utils.parseEther("3"),
         gasLane: "0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c",
-        gasLimit: "2,500,000"
+        gasLimit: ethers.utils.parseEther("0.000000003"),
+        updateInterval: "30"
     }
 }
 

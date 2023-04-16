@@ -52,13 +52,14 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
         uint32 callbackGasLimit,
         uint256 interval
     ) VRFConsumerBaseV2(vrfCoordinatorV2) {
-        i_enteranceFee = entryFee;
+        s_state = LotterState.Open;
+        s_Timestamp = block.timestamp;
+//---------------------------------------------------------------------         
         i_vrfV2CI = VRFCoordinatorV2Interface(vrfCoordinatorV2);
+        i_enteranceFee = entryFee;
         i_gaslane = gaslane;
         i_subId = subId;
         i_callbackGasLimit = callbackGasLimit;
-        s_state = LotterState.Open;
-        s_Timestamp = block.timestamp;
         i_interval = interval;
     }
 
@@ -124,6 +125,10 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
         bool hasBalance = address(this).balance > 0 ; 
 
         upkeepNeeded = (isOpen && timeinterval && hasBalance && hasPlayers);
+    }
+
+    function getInterval() public view returns(uint256) {
+        return i_interval;
     }
 
     function getRecipt() public view returns (uint256) {
