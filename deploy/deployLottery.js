@@ -2,8 +2,10 @@ module.exports = async function ({getNamedAccounts, deployments}) {
 
     const { devChains, networkConfig } = require("../helper-hardhat.config")
     const { deploy, log } = deployments
-    const { deployer } = await ethers.getNamedAccounts()
     const { network, ethers } = require("hardhat")
+
+
+    const { deployer } = await getNamedAccounts()
     const chainId = network.config.chainId
     let VRFCoordinatorV2Address, subscriptionId
     const entryFee = networkConfig[chainId]["entryFee"]
@@ -14,12 +16,12 @@ module.exports = async function ({getNamedAccounts, deployments}) {
 
 
     if(devChains.includes(network.name)) {
-        const vrfc = ethers.getContract("VRFCoordinatorV2Mock")
-        VRFCoordinatorV2Address = vrfc.address
-        const trxresponse = vrfc.createSubscription()
-        const receipt = trxresponse.wait(1)
+        const VRFCoordinatorV2Mock = ethers.getContract("VRFCoordinatorV2Mock")
+        VRFCoordinatorV2Address = VRFCoordinatorV2Mock.address
+        const trxresponse = await VRFCoordinatorV2Mock.createSubscription()
+        const receipt = await trxresponse.wait(1)
         subscriptionId = receipt.events[0].args.subId
-        await vrfc.fundSubscription(subscriptionId, subamt)
+        await VRFCoordinatorV2Mock.fundSubscription(subscriptionId, subamt)
     
     } else {
         VRFCoordinatorV2Address = networkConfig[chainId]["vrfCoordinatorV2"]
