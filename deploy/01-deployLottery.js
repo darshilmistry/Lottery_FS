@@ -36,8 +36,6 @@ module.exports = async function ({getNamedAccounts, deployments}) {
         gasLimit,
         interval
     ]
-
-    console.log(arguments)
     
     log("Deploying Lottery>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     const lottery = await deploy("Lottery", {
