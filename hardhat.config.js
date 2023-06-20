@@ -2,9 +2,10 @@ require("@nomiclabs/hardhat-waffle")
 // require("@nomiclabs/hardhat-etherscan")
 require("hardhat-deploy")
 require("solidity-coverage")
-// require("hardhat-gas-reporter")
+require("hardhat-gas-reporter")
 // require("hardhat-contract-sizer")
 require("dotenv").config({ path: __dirname + '/.env' })
+require("@nomicfoundation/hardhat-verify")
 
 
 
@@ -14,7 +15,9 @@ const ganache_rpc = String(process.env.GRPC)
 
 module.exports = {
   solidity: "0.8.18",
-  
+  mocha: {
+    timeout: 500000, 
+  },
   namedAccounts: {
     deployer: {
       default: 0,
@@ -43,7 +46,10 @@ module.exports = {
       blockConfirmations: 1 
     }
   },
-  mocha : {
-    timeOut: 60000
+  gasReporter: {
+    enabled: true
+  },
+  etherscan: {
+    apiKey: "FS27CIGEQBTWG95MHAPJ6J5N29CMPZYKHM"
   }
 };

@@ -3,6 +3,7 @@ module.exports = async function ({getNamedAccounts, deployments}) {
     const { devChains, networkConfig } = require("../helper-hardhat.config")
     const { deploy, log } = deployments
     const { network, ethers } = require("hardhat")
+    const { verify } = require("../util/verify")
 
 
     const { deployer } = await getNamedAccounts()
@@ -44,8 +45,22 @@ module.exports = async function ({getNamedAccounts, deployments}) {
         log: true,
         waitConfermations: network.config.blockConfirmations || 1
     })
-
     log("Lottry deployed>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+    const svrfCoordinatorV2 = "0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625"
+    const sentryFee = ethers.utils.parseEther("0.3")
+    const sgasLane = "0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c"
+    const ssubscriptionId = "2992"
+    const sgasLimit = ethers.utils.parseEther("0.000000003")
+    const supdateInterval = "60"
+
+    const sargs = [svrfCoordinatorV2, sentryFee, sgasLane, ssubscriptionId, sgasLimit, supdateInterval]
+        
+
+    log("Lottry verifying>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    await verify(lottery.address, sargs)
+    log("Lottry verifieded>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
 
 }
 

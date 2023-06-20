@@ -5,11 +5,11 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol";
 
-// error statements 
+// error statements
 error Lottery__NotEnoughEntryFee();
 error Lottery__TransfureFailed();
 error Lottery__LotteryClosed();
-error Lottery__UpkeeppNotNeeded(uint256 balance, uint256 players, uint256 state);
+error Lottery__UpkeepNotNeeded(uint256 balance, uint256 players, uint256 state);
 
 contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
     enum LotterState {
@@ -31,7 +31,6 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
     bytes32 private immutable i_gaslane;
     uint32 private immutable i_callbackGasLimit;
     uint256 private immutable i_interval;
-    
 
     //  constants
     uint32 private constant WORDCOUNT = 1;
@@ -57,7 +56,7 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
     ) VRFConsumerBaseV2(vrfCoordinatorV2) {
         s_state = LotterState.Open;
         s_Timestamp = block.timestamp;
-//---------------------------------------------------------------------         
+        //---------------------------------------------------------------------
         i_vrfV2CI = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_enteranceFee = entryFee;
         i_gaslane = gaslane;
@@ -66,7 +65,7 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
         i_interval = interval;
     }
 
-//  Functions
+    //  Functions
 
     function enterLottery() public payable {
         if (msg.value < i_enteranceFee) {
@@ -79,16 +78,16 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
         }
     }
 
-    function performUpkeep(bytes calldata /* performData */ ) external override {
-        
+    function performUpkeep(bytes calldata /* performData */) external override {
         (bool upKeepNeede, ) = checkUpkeep("");
-        
-        if(!upKeepNeede) {
-            revert Lottery__UpkeeppNotNeeded(
-                    address(this).balance,
-                    s_players.length,
-                    uint256(s_state)
+
+        if (!upKeepNeede) {
+            revert Lottery__UpkeepNotNeeded(
+                address(this).balance,
+                s_players.length,
+                uint256(s_state)
             );
+            emit UpKeepNotNeede();
         }
 
         emit LotteryCalculating();
@@ -122,22 +121,22 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
 
     function checkUpkeep(
         bytes memory /* calldata */
-    ) public override returns (bool upkeepNeeded, bytes memory /* performData */) { 
+    ) public override returns (bool upkeepNeeded, bytes memory /* performData */) {
         bool isOpen = (LotterState.Open == s_state);
         bool timeinterval = ((block.timestamp - s_Timestamp) >= i_interval);
         bool hasPlayers = (s_players.length > 0);
-        bool hasBalance = address(this).balance > 0 ; 
+        bool hasBalance = address(this).balance > 0;
 
         upkeepNeeded = (isOpen && timeinterval && hasBalance && hasPlayers);
-        if(upkeepNeeded) 
-            emit PerformUpKeep();
-        else
-            emit UpKeepNotNeede();
+        if (upkeepNeeded) emit PerformUpKeep();
+        else emit UpKeepNotNeede();
+
+        return (upkeepNeeded, "0x0");
     }
 
-//    public view functions
+    //    public view functions
 
-    function getInterval() public view returns(uint256) {
+    function getInterval() public view returns (uint256) {
         return i_interval;
     }
 
@@ -157,21 +156,23 @@ contract Lottery is VRFConsumerBaseV2, KeeperCompatibleInterface {
         return s_players[index];
     }
 
-    function getLotteryState() public view returns(LotterState) {
+    function getLotteryState() public view returns (LotterState) {
         return s_state;
     }
 
-    function getPlayerCount() public view returns(uint256) {
+    function getPlayerCount() public view returns (uint256) {
         return s_players.length;
     }
 
-    function getLastTimeStamp() public view returns(uint256) {
+    function getLastTimeStamp() public view returns (uint256) {
         return s_Timestamp;
     }
 
-    function getCallbackGasLimit() public view returns(uint256) {
+    function getCallbackGasLimit() public view returns (uint256) {
         return i_callbackGasLimit;
     }
 
-
+    function getReward() public view returns (uint256) {
+        return address(this).balance;
+    }
 }
