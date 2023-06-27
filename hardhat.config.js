@@ -12,6 +12,7 @@ require("@nomicfoundation/hardhat-verify")
 const sapoila_rpc = String(process.env.SRPC)
 const privateKey = String(process.env.PRIVATEKEY)
 const ganache_rpc = String(process.env.GRPC)
+const etherscanKey = String(process.env.ESKEY)
 
 module.exports = {
   solidity: "0.8.18",
@@ -50,6 +51,6 @@ module.exports = {
     enabled: true
   },
   etherscan: {
-    apiKey: "FS27CIGEQBTWG95MHAPJ6J5N29CMPZYKHM"
+    apiKey: etherscanKey
   }
 };
